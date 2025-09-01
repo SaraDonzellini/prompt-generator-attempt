@@ -1,5 +1,5 @@
-﻿  **Mad Prompt Generator**
-# ======================== #
+#﻿  **Mad Prompt Generator**
+### ======================== #
 
 This is a simple Python script that generates a number of random prompts. 
 The script prompts the user for different style of combinations (random, combinatorial or both), the length desired and then generates a number of prompts decided before in a .txt file, the filename can be chosen by the user or use the default one. 
