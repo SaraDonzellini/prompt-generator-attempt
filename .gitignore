@@ -104,3 +104,12 @@ bckp/ss.txt
 bckp/__pycache__/prompt_generator_test.cpython-310-pytest-8.4.1.pyc
 .vscode/settings.json
 __pycache__/prompt_generator_test.cpython-310.pyc
+dist/fantasy.json
+dist/scifi.json
+dist/horror.json
+fantasy.json
+horror.json
+scifi.json
+dist/prova.txt
+appunti_todo.md
+sort_categories.py

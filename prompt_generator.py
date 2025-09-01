@@ -56,7 +56,6 @@ import random
 import itertools
 import argparse
 import sys
-import subprocess
 from typing import List, Dict
 import re
 
@@ -68,43 +67,59 @@ else:
     os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 
+def load_json_with_encoding(filename):
+    encodings_to_try = ["utf-8", "utf-16", "latin-1", "cp1252"]
+    for enc in encodings_to_try:
+        try:
+            with open(filename, "r", encoding=enc) as f:
+                return json.load(f)
+        except UnicodeDecodeError:
+            continue
+        except Exception as e:
+            print(f"ERRORE: {e}")
+            return None
+    user_enc = input("Impossibile leggere il file JSON. Specifica la codifica: ").strip()
+    try:
+        with open(filename, "r", encoding=user_enc) as f:
+            return json.load(f)
+    except Exception as e:
+        print(f"ERRORE: {e}")
+        return None
+
 def load_parts(filename: str, path: list = None) -> Dict[str, List[str]]:
-    """Carica una sottostruttura del JSON e appiattisce eventuali sottocategorie ricorsivamente."""
+    """Loads a substructure from the JSON and flattens any subcategories recursively."""
     def flatten_dict(d):
         flat = {}
         for k, v in d.items():
             if isinstance(v, list) and v:
                 flat[k] = v
             elif isinstance(v, dict):
-                # Unisci tutte le sottoliste in una sola lista sotto la chiave principale
+                # Merge all sublists into a single list under the main key
                 merged = []
                 for subv in v.values():
                     if isinstance(subv, list):
                         merged.extend(subv)
                 if merged:
                     flat[k] = merged
-                # Mantieni anche le chiavi secondarie come prima (opzionale)
+                # Also keep secondary keys as before (optional)
                 for subk, subv in v.items():
                     if isinstance(subv, list) and subv:
                         flat[f"{k}_{subk}"] = subv
         return flat
 
     try:
-        with open(filename, "r", encoding="utf-8") as f:
-            data = json.load(f)
+        data = load_json_with_encoding(filename)
+        if data is None:
+            raise ValueError("Could not load JSON file or invalid encoding.")
         if path:
             for key in path:
                 data = data[key]
         flat_parts = flatten_dict(data)
-        # DEBUG: stampa le chiavi per capire cosa c'è
-        # if __name__ == "__main__":
-            # print("DEBUG: chiavi parts:", list(flat_parts.keys()))
-            
         if not flat_parts:
-            raise ValueError("Nessuna lista valida trovata nel JSON.")
+            raise ValueError("No valid list found in the JSON.")
         return flat_parts
     except (FileNotFoundError, json.JSONDecodeError, ValueError) as e:
-        print(f"ERRORE: {e}", file=sys.stderr)
+        print(f"ERROR: {e}", file=sys.stderr)
         return {}
     
 def get_next_output_filename(base: str = "invoke_prompts", outdir: str = "") -> str:
@@ -121,22 +136,25 @@ def get_next_output_filename(base: str = "invoke_prompts", outdir: str = "") -> 
         i += 1
 
 def write_prompts(prompts: List[str], filename: str):
+    """
+    Writes the generated prompts to a file in UTF-8 encoding.
+    """
     try:
         outdir = os.path.dirname(filename)
         if outdir and not os.path.exists(outdir):
             os.makedirs(outdir)
-            
+
         with open(filename, "w", encoding="utf-8") as f:
             for p in prompts:
-                # Applica correzioni finali
+                # Apply final grammar corrections
                 corrected = apply_grammar_rules(p)
                 if p == prompts[-1]:
                     f.write(f"{corrected}")
                 else:
                     f.write(f"{corrected}" + "\n_\n")
-        print(f"✅ Generati {len(prompts)} prompt in {filename}")
+        print(f"✅ {len(prompts)} prompts generated and saved in {filename} (UTF-8 encoding)")
     except Exception as e:
-        print(f"ERRORE durante scrittura file: {e}", file=sys.stderr)
+        print(f"ERROR writing file: {e}", file=sys.stderr)
 
 # --- Generazione prompt ---
 
@@ -155,17 +173,6 @@ def generate_random(parts: Dict[str, List[str]], n: int) -> List[str]:
 def generate_combinatorial(parts: Dict[str, List[str]]) -> List[str]:
     combos = itertools.product(*(parts[k] for k in parts))
     return [" ".join(c) for c in combos]
-
-def create_both_prompts(args, parts):
-    result = []
-    half = args.num_prompts // 2
-    result.extend(generate_random(parts, half))
-    # Per la metà restante, usa ordine standard custom
-    default_order = ["art", "noun", "conj", "art", "adj", "verb", "adv", "adj", "conj", "adj"]
-    custom_order = args.custom_order.split(",") if args.custom_order else default_order
-    custom_order = [part.strip() for part in custom_order if part.strip()] or use_every_category(args)
-    return result
-# --- Argparse ---
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Generatore di prompt combinatori, casuali o custom da file JSON.")
@@ -295,8 +302,7 @@ def main(args=None):
     # Carica tutte le parti dal JSON
     parts = {}
     for path in [
-        ["prompt_dictionary", "Dictionary"],
-        ["prompt_dictionary", "Situations"]
+        ["prompt_dictionary", "Dictionary"]
     ]:
         subparts = load_parts(args.input, path=path)
         parts.update(subparts)
@@ -370,64 +376,77 @@ def generate_with_patterns(args, parts):
 
 def load_patterns(filename, key):
     """
-    Carica una lista di pattern (corti o lunghi) dal file JSON.
+    Loads a list of patterns (short or long) from the JSON file.
     """
     try:
-        with open(filename, "r", encoding="utf-8") as f:
-            data = json.load(f)
-        # Cerca sia a livello root che in "prompt_dictionary"
+        data = load_json_with_encoding(filename)
+        if data is None:
+            raise ValueError("Could not load JSON file or invalid encoding.")
+        # Search both at root and in "prompt_dictionary"
         result = data.get(key, [])
         if not result and "prompt_dictionary" in data:
             result = data["prompt_dictionary"].get(key, [])
         return result
     except Exception as e:
-        print(f"ERRORE nel caricamento dei patterns: {e}", file=sys.stderr)
+        print(f"ERROR loading patterns: {e}", file=sys.stderr)
         return []
 
 
 # Funzione custom_order_args rimossa perché la modalità custom non è più supportata
 
 def interactive_menu():
-    print("🔮=== Prompt Generator un po' pazzo ===🔮")
-    print("Benvenuto nel generatore di prompt, che sono in inglese. Metà programma è scritto in italiano ma non farci caso.")
-    print("Il generatore ti darà delle modalità da scegliere: Random, Combinatorial e Both(circa metà e metà)\nDopo, ti chiederà quali pattern vuoi usare. Nel file JSON associato sono già presenti dei pattern ovviamente, ma se vuoi aggiungerne, sentiti liber*.\nUn esempio di pattern (corto):\n'The (Adjectives) (Nouns_singular) (Verbs_singular) through (Adjectives) (Nouns_plural), (Verbs_singular) (Adjectives) (Nouns_plural) across the (Adjectives) (Nouns_singular).'\nL'unica differenza è che dovrai usare le parentesi graffe e non le tonde, io non potevo nell'esempio o Python mi picchiava con un mattone.")
-    print("Beh, che dire, divertiti. Le opzioni sono abbastanza chiare (spero).")
-    print("Auguro divertimento a tutt*,\n la vostra amichevole Strega del Web,\n    WitchRinnie.🔮")
+    print("🔮=== Mad Prompt Generator ===🔮")
+    print("Welcome to the prompt generator! All prompts are in English. (Half the code is in Italian, but don't mind that!(I'm working on it...))")
+    print("You can choose between: Random, Combinatorial, or Both (about half and half).")
+    print("After that, you can choose which patterns to use. The associated JSON file already contains some patterns, but feel free to add your own.")
+    print("Example of a short pattern:")
+    print("'The {Adjectives} {Nouns_singular} {Verbs_singular} through {Adjectives} {Nouns_plural}, {Verbs_singular} {Adjectives} {Nouns_plural} across the {Adjectives} {Nouns_singular}.'")
+    print("Just remember to use curly braces {} for placeholders, not parentheses ().")
+    print("Have fun! The options should be pretty clear (I hope).")
+    print("Enjoy,")
+    print("Your friendly neighbourhood Web Witch,")
+    print("    WitchRinnie.🔮")
     last_outfile = ""
-    outdir = input("Cartella di output (invio per la cartella corrente): ").strip()
+    outdir = input("Output folder (press Enter for current folder): ").strip()
     while True:
-        # Ciclo per scelta modalità valida o uscita con easter egg
+        # Loop for valid mode selection or exit with easter egg
         while True:
-            mode = input("Scegli la modalità: ran (random) / comb (combinatorial) / both (random+combinatorial) [default: ran, oppure scrivi 'exit' per uscire]: ") or "ran"
+            mode = input("Choose mode: ran (random) / comb (combinatorial) / both (random+combinatorial) [default: ran, or type 'sayfriendtoexit'-joking. Type  exit' to quit]: ") or "ran"
             mode = mode.strip().lower()
             if mode == "exit":
-                print("Arrivederci, torna presto!🔮")
-                print(f"Ultimo file generato: {last_outfile}")
+                print("Goodbye, come back soon!🔮")
+                print(f"Last generated file: {last_outfile}")
                 sys.exit(0)
-            if mode == "nomariaioesco":
-                print("Lo sapevo che ci avresti provato.🧙‍♀️")
-                input("Premi Invio per continuare oppure scrivi exit, scemott*")
+            if mode in ["sayfriendstoexit", "mellon"]:
+                print("I knew you'd try that.🧙‍♀️")
+                input("Press Enter to continue or type exit, silly")
                 continue
-            if mode in ["scemott*", "scemott"]:
+            if mode == "silly":
                 print("\n(╮°-°)╮┳━━┳ \n( ╯°□°)╯ ┻━━┻\n<(￣ ﹌ ￣)>\n┬─┬ノ( º _ ºノ)")
-                print("Non sono una scemott*, ma grazie lo stesso.🧙‍♀️")
-                input("Indovina:")
+                print("I'm not a silly, but thanks anyway.🧙‍♀️")
+                input("Guess:")
                 continue
             if mode in ["ran", "comb", "both"]:
                 break
-            input("Modalità non valida! Scegli tra: ran, comb, both oppure scrivi 'exit' per uscire.")
-            
-        num = input("Quanti prompt vuoi generare? [default: 10]: ") or "10"
-        infile_input = input("Nome file input; default: [prompt_parts.json]: ") or "prompt_parts.json"
-        outfile_input = input("Nome file output (invio per auto-nome): ")
+            print("Invalid mode! Choose among: ran, comb, both or type 'exit' to quit.")
 
-        if not os.path.exists(infile_input):
-            print(f"ATTENZIONE: Il file di input '{infile_input}' non esiste!")
+
+        num = input("How many prompts do you want to generate? [default: 10]: ") or "10"
+        infile_input = input("Input file name (you can omit the extension); default: [prompt_parts.json]: ") or "prompt_parts.json"
+        print("The validity and encoding of the JSON will be checked during loading!")
+        outfile_input = input("Output file name (you can omit  the extension here too!) or press Enter for auto-name: ")
+
+        # Add .json only if there is NO extension
+        if infile_input and not os.path.splitext(infile_input)[1]:
+            infile_input += ".json"
+        infile = os.path.join(outdir, infile_input) if outdir else infile_input
+
+        if not os.path.exists(infile):
+            print(f"WARNING: Input file '{infile}' does not exist!")
             continue
-        if infile_input:
-            if not infile_input.lower().endswith(".json"):
-                infile_input += ".json"
-            infile = os.path.join(outdir, infile_input) if outdir else infile_input
+
+        # The validity and encoding of the JSON will be checked later by load_parts/load_json_with_encoding
+
         if outfile_input:
             outfile = f"{outfile_input}.txt"
             outfile = os.path.join(outdir, outfile) if outdir else outfile
@@ -441,18 +460,18 @@ def interactive_menu():
 
         fake_args = FakeArgs()
 
-        # --- ATTRIBUTI OBBLIGATORI ---
+        # --- REQUIRED ATTRIBUTES ---
         fake_args.mode = mode
         fake_args.num_prompts = int(num)
         fake_args.input = infile
         fake_args.output = outfile
         fake_args.comma = ","
 
-        # --- ATTRIBUTI PER PATTERN ---
+        # --- PATTERN ATTRIBUTES ---
         fake_args.short = False
         fake_args.long = False
 
-        # --- ATTRIBUTI PER CATEGORIE (PREVENZIONE ERRORI) ---
+        # --- CATEGORY ATTRIBUTES (ERROR PREVENTION) ---
         fake_args.articles = None
         fake_args.adjectives = None
         fake_args.nouns = None
@@ -464,12 +483,12 @@ def interactive_menu():
         fake_args.styles = None
         fake_args.dramatic_lighting = None
         fake_args.color_tones = None
-        fake_args.custom_order = None  # IMPORTANTE!
+        fake_args.custom_order = None  # IMPORTANT!
 
-        # Gestione pattern choice SOLO per modalità compatibili
+        # Pattern choice management ONLY for compatible modes
         if mode in ["ran", "comb", "both"]:
-            print("Vuoi usare patterns lunghi, corti o entrambi?")
-            print("Digita 'l' per lunghi, 's' per corti, 'b' per entrambi [default: b]:")
+            print("Do you want to use long patterns, short patterns, or both?")
+            print("Type 'l' for long, 's' for short, 'b' for both [default: b]:")
             pattern_choice = input().strip().lower() or "b"
 
             if pattern_choice == "l":
@@ -480,28 +499,25 @@ def interactive_menu():
                 fake_args.short = True
                 fake_args.long = True
 
-        # Rimosso blocco gestione CUSTOM ORDER perché la modalità custom non è più supportata
-
-
-        # SINGOLA CHIAMATA a main
+        # SINGLE CALL to main
         try:
-            main(fake_args)  # Passa l'oggetto fake_args
+            main(fake_args)  # Pass the fake_args object
         except Exception as e:
-            print(f"ERRORE durante la generazione: {e}")
+            print(f"ERROR during generation: {e}")
         print("...")
-        print(f"\nPrompt generati e salvati in: {outfile}")
-        print("\nBatch completato. Premi invio per continuare o 'n' per uscire.")
+        print(f"\nPrompts generated and saved in: {outfile}")
+        print("\nBatch completed. Press Enter to continue or 'n' to exit.")
         if not should_continue():
-            print(f"Ultimo file generato: {last_outfile}")
-            print("Arrivederci, torna presto!🔮")
+            print(f"Last generated file: {last_outfile}")
+            print("Goodbye, come back soon!🔮")
             break
 
 def should_continue():
     """
-    Chiede all'utente se vuole generare un altro batch.
-    Ritorna True per continuare, False per uscire.
+    Asks the user if they want to generate another batch.
+    Returns True to continue, False to exit.
     """
-    again = input("\nVuoi generare un altro batch? (invio per sì, n per no): ")
+    again = input("\nDo you want to generate another batch? (Enter for yes, n for no): ")
     return again.strip().lower() != "n"
 
 def run_program():
