@@ -16,7 +16,7 @@ If the user decides to create more prompts, the script will create another file 
  ## Installation
 
 To use this script, you need to have Python 
-It needs a .json "dictionary" (three files (themes) are provided). If the user wants can import a customized one, using the provided ones as example.
+It needs a .json "dictionary" (one is provided). If the user wants can import a customized one, using the provided ones as example.
 
  ## Requirements
 
@@ -31,3 +31,4 @@ It needs a .json "dictionary" (three files (themes) are provided). If the user w
  ## Future Improvements
 
 1. Executable file with interactive interface.
+2. More Dictionaries divided by themes.
