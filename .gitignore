@@ -1,0 +1,106 @@
+﻿PromptGeneratorCustomizzabile_Witchrinnie.spec
+parts1.json
+ico.ico
+dist/5paxxi.txt
+dist/5paxxi2.txt
+dist/10paxxi.txt
+dist/creepy_horror.json
+dist/fantasy_onirico.json
+dist/invoke_prompts_001.txt
+dist/invoke_prompts_002.txt
+dist/invoke_prompts_003.txt
+dist/invoke_prompts_004.txt
+dist/invoke_prompts_005.txt
+dist/invoke_prompts_006.txt
+dist/parts_01.json
+dist/parts_01.txt
+dist/parts_02.txt
+dist/prompt_parts_1.json
+dist/prompt_parts.json
+dist/prompt_parts0.json
+dist/prompt_partsORIGINALE.json
+dist/PromptGeneratorCustomizzabile_Witchrinnie.exe
+dist/rs.txt
+dist/scifi_tech.json
+dist/YAHOO.txt
+build/PromptGeneratorCustomizzabile_Witchrinnie/Analysis-00.toc
+build/PromptGeneratorCustomizzabile_Witchrinnie/base_library.zip
+build/PromptGeneratorCustomizzabile_Witchrinnie/EXE-00.toc
+build/PromptGeneratorCustomizzabile_Witchrinnie/PKG-00.toc
+build/PromptGeneratorCustomizzabile_Witchrinnie/PromptGeneratorCustomizzabile_Witchrinnie.pkg
+build/PromptGeneratorCustomizzabile_Witchrinnie/PYZ-00.pyz
+build/PromptGeneratorCustomizzabile_Witchrinnie/PYZ-00.toc
+build/PromptGeneratorCustomizzabile_Witchrinnie/warn-PromptGeneratorCustomizzabile_Witchrinnie.txt
+build/PromptGeneratorCustomizzabile_Witchrinnie/xref-PromptGeneratorCustomizzabile_Witchrinnie.html
+build/PromptGeneratorCustomizzabile_Witchrinnie/localpycs/pyimod01_archive.pyc
+build/PromptGeneratorCustomizzabile_Witchrinnie/localpycs/pyimod02_importers.pyc
+build/PromptGeneratorCustomizzabile_Witchrinnie/localpycs/pyimod03_ctypes.pyc
+build/PromptGeneratorCustomizzabile_Witchrinnie/localpycs/pyimod04_pywin32.pyc
+build/PromptGeneratorCustomizzabile_Witchrinnie/localpycs/struct.pyc
+build/prompt_generator/Analysis-00.toc
+build/prompt_generator/base_library.zip
+build/prompt_generator/EXE-00.toc
+build/prompt_generator/PKG-00.toc
+build/prompt_generator/prompt_generator.pkg
+build/prompt_generator/PYZ-00.pyz
+build/prompt_generator/PYZ-00.toc
+build/prompt_generator/warn-prompt_generator.txt
+build/prompt_generator/xref-prompt_generator.html
+build/prompt_generator/localpycs/pyimod01_archive.pyc
+build/prompt_generator/localpycs/pyimod02_importers.pyc
+build/prompt_generator/localpycs/pyimod03_ctypes.pyc
+build/prompt_generator/localpycs/pyimod04_pywin32.pyc
+build/prompt_generator/localpycs/struct.pyc
+bckp/1.txt
+bckp/2.txt
+bckp/3.txt
+bckp/11.txt
+bckp/12.txt
+bckp/dictionary_contrari.json
+bckp/invoke_prompts_001 (2).txt
+bckp/invoke_prompts_001.txt
+bckp/invoke_prompts_002 (2).txt
+bckp/invoke_prompts_002.txt
+bckp/invoke_prompts_003 (2).txt
+bckp/invoke_prompts_003.txt
+bckp/invoke_prompts_004.txt
+bckp/invoke_prompts_005.txt
+bckp/invoke_prompts_006.txt
+bckp/invoke_prompts_007.txt
+bckp/invoke_prompts_008.txt
+bckp/invoke_prompts_009.txt
+bckp/invoke_prompts_010.txt
+bckp/invoke_prompts_011.txt
+bckp/invoke_prompts_012.txt
+bckp/invoke_prompts_013.txt
+bckp/invoke_prompts_014.txt
+bckp/invoke_prompts_015.txt
+bckp/invoke_prompts.txt
+bckp/pl.txt
+bckp/prompt_generatoaaaaaaaaaaar.py
+bckp/prompt_generator - Copia.py
+bckp/prompt_generator (2).spec
+bckp/prompt_generator copy.py
+bckp/prompt_generator in corso.py
+bckp/prompt_generator in corso.spec
+bckp/prompt_generator_test.py
+bckp/prompt_generator.spec
+bckp/prompt_generator22222.py
+bckp/prompt_generatorBKP.py
+bckp/prompt_generatorENNESIMA.py
+bckp/prompt_generatorENNESIMO.py
+bckp/prompt_generatorORIG.py
+bckp/prompt_generatorpiripicc.py
+bckp/prompt_parts - Copia (2).json
+bckp/prompt_parts - Copia.json
+bckp/prompt_partsENNESIMO.json
+bckp/prompt_partsORIGIN.json
+bckp/prompt_plural--1.json
+bckp/prompt_plural.json
+bckp/prompt_singular.json
+bckp/ps.txt
+bckp/sl.txt
+bckp/ss.txt
+bckp/__pycache__/prompt_generator_test.cpython-310-pytest-8.4.1.pyc
+.vscode/settings.json
+__pycache__/prompt_generator_test.cpython-310.pyc
