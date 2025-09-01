@@ -1,0 +1,52 @@
+﻿{
+    "prompt_dictionary": {
+        "id": "prompt_parts",
+        "Value": "A collection of fantasy/oniric prompt parts for generating creative content.",
+        "Version": "1.3",
+        "Pronouns": {
+        "singular": ["he", "she", "it", "this", "that"],
+        "plural": ["they", "we", "you", "these", "those"]
+        },
+    "Patterns_short": [
+        "A {Adjectives} {Subjects_plural} {Verbs_plural} {Adverbs}.",
+        "The {Adjectives} {Subjects_plural} {Verbs_plural} in the {Adjectives} {Subjects_plural}.",
+        "A {Adjectives} {Concepts_singular} {Verbs_singular} {Adverbs}.",
+        "The {Adjectives} {Concepts_plural} {Verbs_plural} in the {Adjectives} {Concepts_plural}.",
+        "A {Subjects_singular} {Verbs_singular} {Adverbs} under the {Adjectives} sky.",
+        "The {Adjectives} {Subjects_singular} {Verbs_singular} with {Adjectives} {Concepts_singular}.",
+        "A {Concepts_singular} {Verbs_singular} {Adverbs} with {Adjectives} {Subjects_plural}."
+    ],
+    "Patterns_long": [
+        "A {Adjectives} {Subjects_plural} {Verbs_plural} {Adverbs}, while a {Adjectives} {Concepts_plural} {Verbs_plural} {Adverbs}.",
+        "The {Adjectives} {Subjects_plural} {Verbs_plural} in the {Adjectives} {Concepts_plural}, while another {Subjects_plural} {Verbs_plural} {Adverbs}.",
+        "A {Subjects_singular} {Verbs_singular} {Adverbs} under the {Adjectives} sky, while {Concepts_singular} {Verbs_singular} in {Adjectives} silence.",
+        "The {Subjects_singular} {Verbs_singular} {Adverbs} with {Adjectives} {Concepts_singular}, as the {Adjectives} {Subjects_singular} {Verbs_singular} nearby."
+    ],
+    "Dictionary": {
+        "Subjects_singular": [
+            "woman", "cat", "dragon", "goddess", "star", "angel", "creature", "knight", "child", "hero", "villain", "beast", "owl", "phoenix", "griffin", "unicorn", "centaur", "golem", "witch", "mage", "raven", "man", "girl", "boy"
+        ],
+        "Subjects_plural": [
+            "women", "cats", "dragons", "goddesses", "stars", "angels", "creatures", "knights", "children", "heroes", "villains", "beasts", "owls", "phoenixes", "griffins", "unicorns", "centaurs", "golems", "witches", "mages", "ravens", "men", "girls", "boys"
+        ],
+        "Concepts_singular": [
+            "dream", "vision", "echo", "melancholy", "energy", "sixth sense", "force", "power", "soul", "essence", "myth", "legend", "fantasy", "illusion"
+        ],
+        "Concepts_plural": [
+            "dreams", "visions", "echoes", "melancholies", "energies", "sixth senses", "forces", "powers", "souls", "essences", "myths", "legends", "fantasies", "illusions"
+        ],
+        "Verbs_singular": [
+            "is glimmering", "is hovering", "is appearing", "is dancing", "is emerging", "is echoing", "is shining"
+        ],
+        "Verbs_plural": [
+            "are glimmering", "are hovering", "are appearing", "are dancing", "are emerging", "are echoing", "are shining"
+        ],
+        "Adjectives": [
+            "ethereal", "mystical", "translucent", "glowing", "crimson", "timeless", "alluring", "shadowy", "majestic"
+        ],
+        "Adverbs": [
+            "luminously", "incandescently", "radiantly", "softly", "dimly", "shimmeringly", "gently", "sporadically"
+        ]
+        }
+    }
+}
